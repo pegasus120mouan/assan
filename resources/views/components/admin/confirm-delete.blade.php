@@ -28,13 +28,15 @@
         <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <h2 id="admin-confirm-title" class="text-lg font-semibold tracking-tight text-night-950" x-text="title"></h2>
             <p class="mt-2 text-sm text-night-800/70" x-text="message"></p>
-            <form method="POST" class="mt-6 flex flex-wrap justify-end gap-2" :action="action">
+            <form method="POST" class="mt-6 flex items-center justify-end gap-2" :action="action">
                 @csrf
                 @method('DELETE')
-                <button type="button" class="rounded-full border border-night-900/15 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50" @click="open = false">
+                <button type="button" class="admin-btn admin-btn--ghost h-9 px-4" @click="open = false">
                     Annuler
                 </button>
-                <button type="submit" class="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700" x-text="confirmLabel"></button>
+                <button type="submit" class="admin-btn admin-btn--danger h-9 px-4" x-text="confirmLabel">
+                    Supprimer
+                </button>
             </form>
         </div>
     </div>
