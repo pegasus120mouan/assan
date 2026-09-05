@@ -26,10 +26,15 @@
                         <td>{{ $promotion->status->label() }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.promotions.edit', $promotion) }}" class="text-sm underline">Modifier</a>
-                            <form method="POST" action="{{ route('admin.promotions.destroy', $promotion) }}" class="inline" onsubmit="return confirm('Supprimer ?')">
-                                @csrf @method('DELETE')
-                                <button class="text-sm text-red-600 underline">Supprimer</button>
-                            </form>
+                            <button
+                                type="button"
+                                class="text-sm text-red-600 underline"
+                                @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                    'title' => 'Supprimer la promotion',
+                                    'message' => 'Supprimer « '.$promotion->name.' » ?',
+                                    'action' => route('admin.promotions.destroy', $promotion),
+                                ]) }})"
+                            >Supprimer</button>
                         </td>
                     </tr>
                 @empty

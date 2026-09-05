@@ -62,11 +62,15 @@
                             <td class="px-4 py-3 text-right">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.brands.edit', $brand) }}" class="text-sm underline">Modifier</a>
-                                    <form method="POST" action="{{ route('admin.brands.destroy', $brand) }}" onsubmit="return confirm('Supprimer cette marque ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-sm text-red-600 underline">Supprimer</button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        class="text-sm text-red-600 underline"
+                                        @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                            'title' => 'Supprimer la marque',
+                                            'message' => 'Supprimer « '.$brand->name.' » ?',
+                                            'action' => route('admin.brands.destroy', $brand),
+                                        ]) }})"
+                                    >Supprimer</button>
                                 </div>
                             </td>
                         </tr>

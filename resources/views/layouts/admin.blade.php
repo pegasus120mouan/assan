@@ -109,6 +109,7 @@
             </main>
         </div>
     </div>
+    <x-admin.confirm-delete />
     @stack('scripts')
 </body>
 </html>

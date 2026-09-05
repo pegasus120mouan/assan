@@ -63,11 +63,15 @@
                                     <div class="flex justify-end gap-2">
                                         <button type="button" class="text-sm underline" @click="modal = {{ $staffUser->id }}">Modifier</button>
                                         @if (auth()->id() !== $staffUser->id)
-                                            <form method="POST" action="{{ route('admin.users.destroy', $staffUser) }}" onsubmit="return confirm('Supprimer cet utilisateur ?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-sm text-red-600 underline">Supprimer</button>
-                                            </form>
+                                            <button
+                                                type="button"
+                                                class="text-sm text-red-600 underline"
+                                                @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                                    'title' => 'Supprimer l’utilisateur',
+                                                    'message' => 'Supprimer « '.$staffUser->name.' » ?',
+                                                    'action' => route('admin.users.destroy', $staffUser),
+                                                ]) }})"
+                                            >Supprimer</button>
                                         @endif
                                     </div>
                                 </td>

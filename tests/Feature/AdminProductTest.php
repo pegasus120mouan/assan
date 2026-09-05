@@ -308,6 +308,7 @@ class AdminProductTest extends TestCase
         $this->actingAs($manager)
             ->get(route('admin.products.index'))
             ->assertOk()
-            ->assertSee('Produits', false);
+            ->assertSee('Produits', false)
+            ->assertSee('admin-confirm-delete', false);
     }
 }

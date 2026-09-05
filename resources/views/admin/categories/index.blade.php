@@ -65,11 +65,15 @@
                             <td class="px-4 py-3 text-right">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="text-sm underline">Modifier</a>
-                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" onsubmit="return confirm('Supprimer cette catégorie ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-sm text-red-600 underline">Supprimer</button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        class="text-sm text-red-600 underline"
+                                        @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                            'title' => 'Supprimer la catégorie',
+                                            'message' => 'Supprimer « '.$category->name.' » ?',
+                                            'action' => route('admin.categories.destroy', $category),
+                                        ]) }})"
+                                    >Supprimer</button>
                                 </div>
                             </td>
                         </tr>

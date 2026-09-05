@@ -19,10 +19,15 @@
                         <td>{{ $coupon->status->label() }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.coupons.edit', $coupon) }}" class="text-sm underline">Modifier</a>
-                            <form method="POST" action="{{ route('admin.coupons.destroy', $coupon) }}" class="inline" onsubmit="return confirm('Supprimer ?')">
-                                @csrf @method('DELETE')
-                                <button class="text-sm text-red-600 underline">Supprimer</button>
-                            </form>
+                            <button
+                                type="button"
+                                class="text-sm text-red-600 underline"
+                                @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                    'title' => 'Supprimer le coupon',
+                                    'message' => 'Supprimer le coupon « '.$coupon->code.' » ?',
+                                    'action' => route('admin.coupons.destroy', $coupon),
+                                ]) }})"
+                            >Supprimer</button>
                         </td>
                     </tr>
                 @empty

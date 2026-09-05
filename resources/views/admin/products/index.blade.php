@@ -148,18 +148,28 @@
                                             @csrf
                                             <button type="submit" class="admin-btn admin-btn--ghost">Restaurer</button>
                                         </form>
-                                        <form method="POST" action="{{ route('admin.products.force-destroy', $product) }}" onsubmit="return confirm('Supprimer définitivement ce produit ?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="admin-btn admin-btn--danger">Supprimer</button>
-                                        </form>
+                                        <button
+                                            type="button"
+                                            class="admin-btn admin-btn--danger"
+                                            @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                                'title' => 'Supprimer définitivement',
+                                                'message' => 'Supprimer définitivement « '.$product->name.' » ? Cette action est irréversible.',
+                                                'action' => route('admin.products.force-destroy', $product),
+                                                'confirmLabel' => 'Supprimer définitivement',
+                                            ]) }})"
+                                        >Supprimer</button>
                                     @else
                                         <a href="{{ route('admin.products.edit', $product) }}" class="admin-btn admin-btn--ghost">Modifier</a>
-                                        <form method="POST" action="{{ route('admin.products.destroy', $product) }}" onsubmit="return confirm('Mettre ce produit à la corbeille ?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="admin-btn admin-btn--danger">Supprimer</button>
-                                        </form>
+                                        <button
+                                            type="button"
+                                            class="admin-btn admin-btn--danger"
+                                            @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                                'title' => 'Mettre à la corbeille',
+                                                'message' => 'Mettre « '.$product->name.' » à la corbeille ?',
+                                                'action' => route('admin.products.destroy', $product),
+                                                'confirmLabel' => 'Mettre à la corbeille',
+                                            ]) }})"
+                                        >Supprimer</button>
                                     @endif
                                 </div>
                             </td>

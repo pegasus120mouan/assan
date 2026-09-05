@@ -40,20 +40,21 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.862 3.487a2.1 2.1 0 1 1 2.97 2.97L8.25 18.04l-3.97.99.99-3.97 11.592-11.573z" />
                                         </svg>
                                     </button>
-                                    <form method="POST" action="{{ route('admin.delivery-fees.destroy', $fee) }}" class="inline" onsubmit="return confirm('Supprimer ce tarif ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button
-                                            type="submit"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50"
-                                            aria-label="Supprimer"
-                                            title="Supprimer"
-                                        >
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50"
+                                        aria-label="Supprimer"
+                                        title="Supprimer"
+                                        @click="$dispatch('admin-confirm-delete', {{ \Illuminate\Support\Js::from([
+                                            'title' => 'Supprimer le tarif',
+                                            'message' => 'Supprimer ce tarif de livraison ?',
+                                            'action' => route('admin.delivery-fees.destroy', $fee),
+                                        ]) }})"
+                                    >
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3h6m-8 4h10m-9 0 .7 12.1a1.5 1.5 0 0 0 1.5 1.4h4.6a1.5 1.5 0 0 0 1.5-1.4L16 7M10 11v6m4-6v6" />
                                             </svg>
                                         </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>
