@@ -141,4 +141,27 @@ class AuthenticationTest extends TestCase
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
+
+    public function test_shop_reset_admin_creates_or_updates_the_administrator(): void
+    {
+        $this->artisan('shop:reset-admin', [
+            '--email' => 'admin@assan.ci',
+            '--password' => 'AssanAdmin2026!',
+            '--name' => 'Administrateur ASSAN',
+        ])->assertSuccessful();
+
+        $admin = User::query()->where('email', 'admin@assan.ci')->first();
+
+        $this->assertNotNull($admin);
+        $this->assertTrue($admin->isAdmin());
+        $this->assertTrue($admin->isActive());
+        $this->assertTrue(Hash::check('AssanAdmin2026!', $admin->password));
+
+        $this->artisan('shop:reset-admin', [
+            '--email' => 'admin@assan.ci',
+            '--password' => 'NouveauMotDePasse1!',
+        ])->assertSuccessful();
+
+        $this->assertTrue(Hash::check('NouveauMotDePasse1!', $admin->fresh()->password));
+    }
 }

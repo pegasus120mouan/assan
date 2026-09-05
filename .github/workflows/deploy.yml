@@ -1,0 +1,85 @@
+# Déploiement ASSAN (Laravel) vers le VPS Apache.
+# Secrets GitHub (Settings → Secrets and variables → Actions) :
+#   SSH_HOST          ex. assan.ci ou IP
+#   SSH_USER          utilisateur SSH
+#   SSH_PRIVATE_KEY   clé privée (contenu du fichier .pem / id_rsa)
+#   SSH_PORT          optionnel, 22 par défaut
+#
+# Le site est dans /var/www/html/assan (DocumentRoot = .../public).
+# public/build est ignoré par git : on le compile ici puis on l’envoie.
+
+name: Deploy ASSAN
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-assan
+  cancel-in-progress: false
+
+env:
+  APP_DIR: /var/www/html/assan
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Build Vite assets
+        run: |
+          npm ci
+          npm run build
+          test -f public/build/manifest.json
+
+      - name: Upload public/build
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: public/build
+          target: ${{ env.APP_DIR }}/public
+          overwrite: true
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            APP_DIR="${{ env.APP_DIR }}"
+            cd "$APP_DIR"
+
+            git config --global --add safe.directory "$APP_DIR"
+
+            php artisan down --retry=60 || true
+
+            git fetch --all
+            git reset --hard origin/main
+
+            composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+
+            php artisan migrate --force
+            php artisan storage:link || true
+
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan queue:restart || true
+
+            php artisan up
